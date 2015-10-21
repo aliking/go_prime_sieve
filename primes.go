@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"math"
 	"os"
 	"sort"
 	"strconv"
@@ -12,7 +13,7 @@ func findMultiples(factor int, max int, c chan int, wg *sync.WaitGroup, stoppabl
 	var product int
 	for mult := 2; ; mult++ {
 		if stoppable && !primes[factor] {
-			//	fmt.Println(factor, " processor cut short")
+			//fmt.Println(factor, " processor cut short after", mult-1, "cycles")
 			break
 		}
 		product = factor * mult
@@ -62,7 +63,9 @@ func main() {
 
 	go markPrimes(primes, c)
 
-	for i := 2; i <= num; i++ {
+	routineMax := int(math.Sqrt(float64(num)))
+
+	for i := 2; i <= routineMax; i++ {
 		wg.Add(1)
 		go findMultiples(i, num, c, &wg, true, primes)
 	}
